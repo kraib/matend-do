@@ -23,12 +23,13 @@ Before you begin, ensure you have:
 
 - Node.js 18.x or later
 - npm or yarn
-- A Google Cloud Project with:
-  - Google OAuth 2.0 configured
-  - Google Sheets API enabled
-  - Google Drive API enabled
-  - OAuth consent screen configured
-  - Authorized redirect URIs set up
+- A Google Cloud Project with required configuration
+  - **[Follow our detailed Google Cloud Setup Guide](./GOOGLE_SETUP.md)** for step-by-step instructions on:
+    - Creating a Google Cloud Project
+    - Enabling required APIs
+    - Setting up OAuth credentials
+    - Getting your refresh token
+    - Configuring the OAuth consent screen
 
 ## Environment Setup
 
@@ -42,6 +43,8 @@ NEXTAUTH_URL=http://localhost:3000
 GOOGLE_SHEET_ID=your_google_sheet_id
 APP_OWNER_REFRESH_TOKEN=your_refresh_token
 ```
+
+For detailed instructions on getting these values, see the [Google Cloud Setup Guide](./GOOGLE_SETUP.md).
 
 ## Google Cloud Setup
 
