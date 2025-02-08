@@ -1,21 +1,21 @@
-# Health Vitals Tracker
+# Matendo Vitals Tracker
 
-A modern web application for tracking health vitals with Google Sheets integration. Built with Next.js 14, TypeScript, and Tailwind CSS.
+A modern, secure health vitals tracking application that stores patient data in Google Sheets. Built with Next.js 14, TypeScript, and Tailwind CSS.
 
 ## Features
 
 - 🔐 Secure Google OAuth authentication
-- 📊 Track multiple vital types:
-  - Blood Pressure
-  - Heart Rate
-  - Temperature
-  - Blood Sugar
-  - Weight
-  - Oxygen Saturation
+- 📊 Track multiple vital types with real-time validation:
+  - Blood Pressure (mmHg)
+  - Heart Rate (bpm)
+  - Temperature (°C)
+  - Oxygen Saturation (%)
 - 📝 Add notes to each vital reading
-- 📈 Data stored in Google Sheets for easy access and analysis
-- 🎨 Clean, modern UI with responsive design
+- 📈 Centralized data storage in Google Sheets for easy access and analysis
+- 🎨 Modern UI with responsive design and loading states
 - 🌙 Patient-centric data organization
+- 🔄 Real-time form validation and feedback
+- 🚀 Server-side data processing with Next.js Server Actions
 
 ## Prerequisites
 
@@ -27,6 +27,8 @@ Before you begin, ensure you have:
   - Google OAuth 2.0 configured
   - Google Sheets API enabled
   - Google Drive API enabled
+  - OAuth consent screen configured
+  - Authorized redirect URIs set up
 
 ## Environment Setup
 
@@ -38,14 +40,32 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXTAUTH_SECRET=your_nextauth_secret
 NEXTAUTH_URL=http://localhost:3000
 GOOGLE_SHEET_ID=your_google_sheet_id
+APP_OWNER_REFRESH_TOKEN=your_refresh_token
 ```
+
+## Google Cloud Setup
+
+1. Create a new project in Google Cloud Console
+2. Enable the following APIs:
+   - Google Sheets API
+   - Google Drive API
+3. Configure OAuth consent screen:
+   - Add required scopes:
+     - `https://www.googleapis.com/auth/drive`
+     - `https://www.googleapis.com/auth/spreadsheets`
+4. Create OAuth 2.0 credentials:
+   - Add authorized redirect URIs:
+     ```
+     http://localhost:3000/api/auth/callback/google
+     https://your-production-domain.com/api/auth/callback/google
+     ```
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/health-vitals-tracker.git
-cd health-vitals-tracker
+git clone https://github.com/yourusername/matendo-vitals-tracker.git
+cd matendo-vitals-tracker
 ```
 
 2. Install dependencies:
@@ -67,14 +87,14 @@ yarn dev
 ## Project Structure
 
 ```
-health-vitals-tracker/
+matendo-vitals-tracker/
 ├── app/                    # Next.js 14 app directory
-│   ├── actions/           # Server actions
-│   ├── api/               # API routes
+│   ├── actions/           # Server actions for form handling
+│   ├── api/               # API routes including auth
 │   ├── components/        # React components
 │   └── layout.tsx         # Root layout
 ├── lib/
-│   ├── services/          # Service layer
+│   ├── services/          # Google API services
 │   └── utils/             # Utility functions
 ├── public/                # Static files
 └── types/                 # TypeScript type definitions
@@ -87,9 +107,9 @@ health-vitals-tracker/
 - **Authentication**: NextAuth.js with Google OAuth
 - **Styling**: Tailwind CSS
 - **Data Storage**: Google Sheets API
-- **File Storage**: Google Drive API
 - **Form Handling**: React Server Actions
-- **State Management**: React Context
+- **State Management**: React Context & Server Actions
+- **UI Components**: Shadcn/ui
 
 ## Features in Detail
 
@@ -99,21 +119,33 @@ health-vitals-tracker/
 - Protected routes and API endpoints
 
 ### Vital Tracking
-- Support for multiple vital types
-- Validation for each vital type
-- Unit conversion and standardization
+- Support for multiple vital types with appropriate units
+- Real-time form validation
+- Loading states during submission
+- Automatic unit conversion and standardization
 - Optional notes for context
 
 ### Google Integration
-- Automatic spreadsheet creation
-- Patient-specific folder organization
+- Centralized spreadsheet for all patient data
+- Secure access through app owner's credentials
 - Real-time data synchronization
+- Automatic sheet creation and management
 
 ### User Interface
 - Responsive design for all devices
+- Interactive vital type selection with pill buttons
 - Form validation and error handling
-- Loading states and feedback
+- Loading states and user feedback
 - Clean and intuitive navigation
+
+## Security Features
+
+- OAuth 2.0 authentication
+- Server-side data processing
+- Secure credential management
+- Protected API routes
+- CSRF protection
+- Secure session handling
 
 ## Contributing
 
@@ -135,4 +167,5 @@ For support, please open an issue in the GitHub repository or contact the mainta
 
 - Next.js team for the amazing framework
 - Google Cloud Platform for APIs
+- Shadcn/ui for beautiful components
 - The open-source community for inspiration and tools
