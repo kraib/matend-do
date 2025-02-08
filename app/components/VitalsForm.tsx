@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { useFormState } from "react-dom"
+import { useFormState, useFormStatus } from "react-dom"
 import { submitVital } from "../actions/submitVital"
 import VitalSelector from "./VitalSelector"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 
 type VitalType = "bloodPressure" | "heartRate" | "temperature" | "oxygenSaturation"
 
@@ -23,9 +24,24 @@ const VITAL_CONFIGS: Record<VitalType, VitalUnit> = {
   oxygenSaturation: { unit: "%", min: 0, max: 100 },
 };
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  
+  return (
+    <Button 
+      type="submit" 
+      className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+      disabled={pending}
+    >
+      {pending ? 'Sending Data...' : 'Submit Vital'}
+    </Button>
+  );
+}
+
 export default function VitalsForm() {
   const [state, formAction] = useFormState(submitVital, null)
   const [selectedVital, setSelectedVital] = useState<VitalType>("bloodPressure")
+  const { pending } = useFormStatus();
 
   const getInputType = (vitalType: VitalType): string => {
     switch (vitalType) {
@@ -83,7 +99,7 @@ export default function VitalsForm() {
     <form action={handleSubmit} className="space-y-6">
       <h2 className="text-2xl font-bold mb-4">{getVitalTitle(selectedVital)}</h2>
 
-      <VitalSelector selectedVital={selectedVital} onSelect={setSelectedVital} />
+      <VitalSelector selectedVital={selectedVital} onSelect={setSelectedVital} disabled={pending} />
 
       <div className="space-y-4">
         <div>
@@ -100,6 +116,7 @@ export default function VitalsForm() {
             step={selectedVital === "temperature" ? "0.1" : "1"}
             min={VITAL_CONFIGS[selectedVital].min}
             max={VITAL_CONFIGS[selectedVital].max}
+            disabled={pending}
           />
         </div>
 
@@ -110,15 +127,14 @@ export default function VitalsForm() {
             name="notes"
             placeholder="Add any additional notes here..."
             className="mt-1"
+            disabled={pending}
           />
         </div>
       </div>
 
       <input type="hidden" name="vitalType" value={selectedVital} />
 
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-        Submit Vital
-      </button>
+      <SubmitButton />
 
       {state?.message && (
         <p className={`mt-4 text-center ${state.success ? "text-green-600" : "text-red-600"}`}>

@@ -3,15 +3,24 @@
 import { getServerSession } from "next-auth"
 import { HealthRecordsService } from "@/lib/services/health-records.service"
 import { authOptions } from "../api/auth/[...nextauth]/route"
+import { GoogleDriveService } from "@/lib/services/google-drive.service"
+import { GoogleSheetsService } from "@/lib/services/google-sheets.service"
+
+// Initialize services with app owner's refresh token
+const APP_OWNER_REFRESH_TOKEN = process.env.APP_OWNER_REFRESH_TOKEN
+if (APP_OWNER_REFRESH_TOKEN) {
+  GoogleDriveService.setRefreshToken(APP_OWNER_REFRESH_TOKEN)
+  GoogleSheetsService.setRefreshToken(APP_OWNER_REFRESH_TOKEN)
+}
 
 export async function submitVital(prevState: any, formData: FormData) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user?.email || !session?.user?.name || !session.accessToken) {
+    if (!session?.user?.email || !session?.user?.name) {
       return { 
         success: false, 
-        message: "You must be logged in with proper permissions to submit vitals." 
+        message: "You must be logged in to submit vitals." 
       }
     }
 
@@ -41,14 +50,10 @@ export async function submitVital(prevState: any, formData: FormData) {
     }
 
     console.log('Creating HealthRecordsService with:', {
-      accessToken: 'redacted',
       email: session.user.email
     });
 
-    const healthRecords = new HealthRecordsService(
-      session.accessToken,
-      session.user.email
-    )
+    const healthRecords = new HealthRecordsService(session.user.email)
 
     console.log('Recording vital:', {
       patientName: session.user.name,

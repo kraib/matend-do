@@ -2,28 +2,38 @@ import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 
 export class GoogleDriveService {
+  private static instance: GoogleDriveService;
   private drive;
   private oauth2Client: OAuth2Client;
+  private static refreshToken: string | null = null;
 
-  constructor(accessToken: string) {
-    if (!accessToken) {
-      throw new Error('Access token is required');
-    }
-
+  private constructor() {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.NEXTAUTH_URL
     );
 
+    if (!GoogleDriveService.refreshToken) {
+      throw new Error('Refresh token not set. Please authenticate as app owner first.');
+    }
+
     this.oauth2Client.setCredentials({
-      access_token: accessToken,
-      token_type: 'Bearer'
+      refresh_token: GoogleDriveService.refreshToken
     });
 
-    this.drive = google.drive({ 
-      version: 'v3', 
-      auth: this.oauth2Client 
-    });
+    this.drive = google.drive({ version: 'v3', auth: this.oauth2Client });
+  }
+
+  public static setRefreshToken(token: string) {
+    GoogleDriveService.refreshToken = token;
+  }
+
+  public static getInstance(): GoogleDriveService {
+    if (!GoogleDriveService.instance) {
+      GoogleDriveService.instance = new GoogleDriveService();
+    }
+    return GoogleDriveService.instance;
   }
 
   async ensurePatientFolder(patientEmail: string): Promise<string> {

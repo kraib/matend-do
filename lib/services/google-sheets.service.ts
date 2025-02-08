@@ -12,27 +12,41 @@ export interface VitalEntry {
 }
 
 export class GoogleSheetsService {
+  private static instance: GoogleSheetsService;
   private sheets;
   private spreadsheetId: string;
   private sheetName = 'Vitals';
+  private oauth2Client: OAuth2Client;
+  private static refreshToken: string | null = null;
 
-  constructor(accessToken: string) {
-    if (!accessToken) {
-      throw new Error('Access token is required');
-    }
-
-    const oauth2Client = new google.auth.OAuth2(
+  private constructor() {
+    this.oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.NEXTAUTH_URL
     );
 
-    oauth2Client.setCredentials({
-      access_token: accessToken,
-      token_type: 'Bearer'
+    if (!GoogleSheetsService.refreshToken) {
+      throw new Error('Refresh token not set. Please authenticate as app owner first.');
+    }
+
+    this.oauth2Client.setCredentials({
+      refresh_token: GoogleSheetsService.refreshToken
     });
 
-    this.sheets = google.sheets({ version: 'v4', auth: oauth2Client });
+    this.sheets = google.sheets({ version: 'v4', auth: this.oauth2Client });
     this.spreadsheetId = process.env.GOOGLE_SHEET_ID!;
+  }
+
+  public static setRefreshToken(token: string) {
+    GoogleSheetsService.refreshToken = token;
+  }
+
+  public static getInstance(): GoogleSheetsService {
+    if (!GoogleSheetsService.instance) {
+      GoogleSheetsService.instance = new GoogleSheetsService();
+    }
+    return GoogleSheetsService.instance;
   }
 
   private async ensureSpreadsheet() {

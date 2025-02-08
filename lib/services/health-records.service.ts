@@ -6,16 +6,13 @@ export class HealthRecordsService {
   private sheetsService: GoogleSheetsService;
   private patientEmail: string;
 
-  constructor(accessToken: string, patientEmail: string) {
-    if (!accessToken) {
-      throw new Error('Access token is required');
-    }
+  constructor(patientEmail: string) {
     if (!patientEmail) {
       throw new Error('Patient email is required');
     }
 
-    this.driveService = new GoogleDriveService(accessToken);
-    this.sheetsService = new GoogleSheetsService(accessToken);
+    this.driveService = GoogleDriveService.getInstance();
+    this.sheetsService = GoogleSheetsService.getInstance();
     this.patientEmail = patientEmail;
   }
 
