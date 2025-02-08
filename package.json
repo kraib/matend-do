@@ -58,7 +58,10 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "@vercel/blob": "latest"
+    "@vercel/blob": "latest",
+    "next-auth": "^4.24.5",
+    "googleapis": "^133.0.0",
+    "@google-cloud/local-auth": "^2.1.0"
   },
   "devDependencies": {
     "@types/node": "^22",
