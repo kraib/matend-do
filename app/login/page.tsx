@@ -12,9 +12,9 @@ export default async function LoginPage() {
   const session = await getServerSession();
   
   // Only redirect if we're on the login page and have a session
-  if (session?.user) {
-    redirect('/');
-  }
+  // if (session?.user) {
+  //   redirect('/');
+  // }
 
   return <LoginForm />;
 }
