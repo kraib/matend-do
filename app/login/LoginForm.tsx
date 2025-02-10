@@ -14,11 +14,12 @@ export default function LoginForm() {
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   useEffect(() => {
-    if (session?.user?.name) {
+    if (status === 'authenticated' && session?.user?.name) {
       setPatientName(session.user.name);
+      // Use replace to avoid adding to history stack
       router.replace(callbackUrl);
     }
-  }, [session, router, setPatientName, callbackUrl]);
+  }, [session, status, router, setPatientName, callbackUrl]);
 
   if (status === 'loading') {
     return (
@@ -31,10 +32,10 @@ export default function LoginForm() {
     );
   }
 
-  const handleSignIn = async () => {
-    await signIn('google', { 
+  const handleSignIn = () => {
+    signIn('google', {
       callbackUrl,
-      redirect: true 
+      redirect: true,
     });
   };
 
