@@ -1,4 +1,4 @@
-import { getServerSession } from 'next-auth';
+import {  useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import LoginForm from './LoginForm';
 
@@ -9,12 +9,12 @@ export const metadata = {
 };
 
 export default async function LoginPage() {
-  const session = await getServerSession();
+  const { data: session } = useSession();
   
   // Only redirect if we're on the login page and have a session
-  // if (session?.user) {
-  //   redirect('/');
-  // }
+  if (session?.user) {
+    redirect('/');
+  }
 
   return <LoginForm />;
 }
