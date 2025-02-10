@@ -21,12 +21,6 @@ export default function LoginForm() {
     }
   }, [session, status, router, setPatientName, callbackUrl]);
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      window.location.href = '/';
-    }
-  }, [status]);
-
   if (status === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">

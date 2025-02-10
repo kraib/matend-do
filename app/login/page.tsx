@@ -9,13 +9,12 @@ export const metadata = {
 };
 
 export default async function LoginPage() {
+  const session = await getServerSession();
   
-  // const session = await getServerSession();
-  
-  // // Only redirect if we're on the login page and have a session
-  // if (session?.user) {
-  //   redirect('/');
-  // }
+  // Only redirect if we're on the login page and have a session
+  if (session?.user) {
+    redirect('/');
+  }
 
   return <LoginForm />;
 }
