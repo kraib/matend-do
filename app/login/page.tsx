@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function LoginPage() {
   const session = await getServerSession();
-  
+  console.log(session);
   // Only redirect if we're on the login page and have a session
   if (session?.user) {
     redirect('/');
