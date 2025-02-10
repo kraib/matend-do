@@ -16,7 +16,7 @@ export default function LoginForm() {
   useEffect(() => {
     if (session?.user?.name) {
       setPatientName(session.user.name);
-      router.push(callbackUrl);
+      router.replace(callbackUrl);
     }
   }, [session, router, setPatientName, callbackUrl]);
 
@@ -31,6 +31,13 @@ export default function LoginForm() {
     );
   }
 
+  const handleSignIn = async () => {
+    await signIn('google', { 
+      callbackUrl,
+      redirect: true 
+    });
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-lg">
@@ -44,7 +51,7 @@ export default function LoginForm() {
         </div>
         <div className="mt-8">
           <Button
-            onClick={() => signIn('google', { callbackUrl })}
+            onClick={handleSignIn}
             className="w-full flex items-center justify-center"
             size="lg"
           >
