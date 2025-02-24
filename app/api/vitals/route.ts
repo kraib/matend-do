@@ -1,0 +1,158 @@
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  const vitalsData = [
+    { 
+      date: "2025-02-01", 
+      heartRate: 72, 
+      bloodPressure: 120, 
+      respiratoryRate: 16, 
+      oxygenSaturation: 98, 
+      temperature: 36.5, 
+      weight: 70, 
+      height: 170, 
+      bmi: 24.2,
+      bloodSugar: 5.4,
+      dailySteps: 8000, 
+      exerciseDuration: 30, 
+      waterIntake: 2.5,
+
+      painLevel: 3, 
+      painDuration: 15, 
+      mood: 75, 
+      stress: 40, 
+      fatigue: 35,
+
+      sleepDuration: 7, 
+      sleepQuality: 8, 
+      timesWokenUp: 1,
+
+      energyLevel: 7, 
+      appetite: 8,
+
+      hba1c: 5.2, 
+      sodium: 140, 
+      potassium: 4.2, 
+      calcium: 9.5, 
+      magnesium: 2.1, 
+      cholesterol: 180, 
+      ldl: 100, 
+      hdl: 50, 
+      triglycerides: 120,
+
+      hemoglobin: 14.5, 
+      wbc: 6.2, 
+      rbc: 4.8, 
+      platelets: 250, 
+      tsh: 1.8, 
+      freeT3: 3.2, 
+      freeT4: 1.2, 
+      alt: 25, 
+      ast: 22, 
+      alp: 80, 
+      bilirubin: 0.9, 
+      creatinine: 1.0, 
+      bun: 15,
+
+      vitaminD: 30, 
+      vitaminB12: 500, 
+      cea: 2.5, 
+      afp: 3.2, 
+      ca125: 15, 
+      ca153: 18, 
+      psa: 1.2, 
+      bhcg: 0.1, 
+      ldh: 180, 
+      hpg80: 5.6,
+
+      cd4: 800, 
+      viralLoad: 50, 
+      crp: 2.0, 
+      esr: 10, 
+      ferritin: 120,
+
+      morphineDose: 10, 
+      insulinLantusDose: 15, 
+      actrapidDose: 10,
+
+      trend: "stable"
+    },
+    { 
+      date: "2025-02-02", 
+      heartRate: 75, 
+      bloodPressure: 122, 
+      respiratoryRate: 17, 
+      oxygenSaturation: 97, 
+      temperature: 36.7, 
+      weight: 70.2, 
+      height: 170, 
+      bmi: 24.3,
+      bloodSugar: 5.6,
+      dailySteps: 7500, 
+      exerciseDuration: 25, 
+      waterIntake: 2.3,
+
+      painLevel: 4, 
+      painDuration: 20, 
+      mood: 72, 
+      stress: 45, 
+      fatigue: 38,
+
+      sleepDuration: 6.5, 
+      sleepQuality: 7, 
+      timesWokenUp: 2,
+
+      energyLevel: 6, 
+      appetite: 7,
+
+      hba1c: 5.3, 
+      sodium: 138, 
+      potassium: 4.0, 
+      calcium: 9.4, 
+      magnesium: 2.0, 
+      cholesterol: 190, 
+      ldl: 110, 
+      hdl: 45, 
+      triglycerides: 125,
+
+      hemoglobin: 14.2, 
+      wbc: 6.5, 
+      rbc: 4.9, 
+      platelets: 245, 
+      tsh: 1.9, 
+      freeT3: 3.1, 
+      freeT4: 1.3, 
+      alt: 28, 
+      ast: 24, 
+      alp: 85, 
+      bilirubin: 1.0, 
+      creatinine: 1.1, 
+      bun: 16,
+
+      vitaminD: 32, 
+      vitaminB12: 520, 
+      cea: 2.7, 
+      afp: 3.5, 
+      ca125: 18, 
+      ca153: 20, 
+      psa: 1.3, 
+      bhcg: 0.2, 
+      ldh: 185, 
+      hpg80: 5.9,
+
+      cd4: 780, 
+      viralLoad: 60, 
+      crp: 2.2, 
+      esr: 12, 
+      ferritin: 125,
+
+      morphineDose: 12, 
+      insulinLantusDose: 18, 
+      actrapidDose: 12,
+
+      trend: "slightly increasing"
+    },
+  ];
+
+  return NextResponse.json(vitalsData);
+}

@@ -24,6 +24,16 @@ export class HealthRecordsService {
     notes?: string;
   }) {
     try {
+      // Validate vital type
+      const validVitalTypes = [
+        "bloodPressure", "heartRate", "temperature", "oxygenSaturation",
+        "weight", "height", "bloodSugar"
+      ];
+      
+      if (!validVitalTypes.includes(vital.type)) {
+        throw new Error(`Invalid vital type: ${vital.type}`);
+      }
+
       // Ensure patient folder exists
       const folderId = await this.driveService.ensurePatientFolder(this.patientEmail);
       console.log('Patient folder ID:', folderId);
@@ -51,6 +61,11 @@ export class HealthRecordsService {
   }
 
   async getPatientVitals(): Promise<any[]> {
-    return this.sheetsService.getVitalEntries(this.patientEmail);
+    try {
+      return await this.sheetsService.getVitalEntries(this.patientEmail);
+    } catch (error) {
+      console.error("Error fetching patient vitals:", error);
+      throw new Error("Failed to retrieve patient vitals.");
+    }
   }
 }
