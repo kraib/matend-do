@@ -1,8 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
 
-export function middleware(req: NextRequest) {
-    // Skip authentication if running in development mode
-    if (process.env.NODE_ENV === "development") {
-        return NextResponse.next();
-    }
-}
+export default withAuth({
+  pages: {
+    signIn: "/login",
+  },
+});
+
+export const config = {
+  matcher: [
+    "/",
+    "/history",
+    "/profile",
+    "/settings",
+    "/((?!api|login|_next/static|_next/image|favicon.ico).*)",
+  ],
+};
