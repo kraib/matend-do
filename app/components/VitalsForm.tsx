@@ -1,146 +1,59 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useFormState, useFormStatus } from "react-dom"
-import { submitVital } from "../actions/submitVital"
-import VitalSelector from "./VitalSelector"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-
-type VitalType = "bloodPressure" | "heartRate" | "temperature" | "oxygenSaturation"
-
-interface VitalUnit {
-  unit: string;
-  min: number;
-  max: number;
-}
-
-const VITAL_CONFIGS: Record<VitalType, VitalUnit> = {
-  bloodPressure: { unit: "mmHg", min: 0, max: 300 },
-  heartRate: { unit: "bpm", min: 0, max: 300 },
-  temperature: { unit: "°F", min: 80, max: 120 },
-  oxygenSaturation: { unit: "%", min: 0, max: 100 },
-};
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  
-  return (
-    <Button 
-      type="submit" 
-      className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-      disabled={pending}
-    >
-      {pending ? 'Sending Data...' : 'Submit Vital'}
-    </Button>
-  );
-}
+import { useState } from "react";
+import { submitVital } from "../actions/submitVital";
+import VitalSelector from "./VitalSelector";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { VitalType, VITALS_LIST } from "./types"; // ✅ Importing from types.ts
 
 export default function VitalsForm() {
-  const [state, formAction] = useFormState(submitVital, null)
-  const [selectedVital, setSelectedVital] = useState<VitalType>("bloodPressure")
-  const { pending } = useFormStatus();
+  const [selectedVital, setSelectedVital] = useState<VitalType>("bloodPressure");
+  const [inputValue, setInputValue] = useState<string>("");
 
-  const getInputType = (vitalType: VitalType): string => {
-    switch (vitalType) {
-      case "bloodPressure":
-        return "text"
-      case "heartRate":
-      case "oxygenSaturation":
-        return "number"
-      case "temperature":
-        return "number"
-      default:
-        return "text"
-    }
-  }
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    formData.append('unit', VITALS_LIST.find(vital => vital.type === selectedVital)?.unit || "");
 
-  const getPlaceholder = (vitalType: VitalType): string => {
-    switch (vitalType) {
-      case "bloodPressure":
-        return "120/80"
-      case "heartRate":
-        return "72"
-      case "temperature":
-        return "98.6"
-      case "oxygenSaturation":
-        return "98"
-      default:
-        return ""
-    }
-  }
-
-  const getVitalTitle = (vitalType: VitalType): string => {
-    switch (vitalType) {
-      case "bloodPressure":
-        return "Blood Pressure"
-      case "heartRate":
-        return "Heart Rate"
-      case "temperature":
-        return "Temperature"
-      case "oxygenSaturation":
-        return "Oxygen Saturation"
-      default:
-        return ""
-    }
-  }
-
-  const handleSubmit = async (formData: FormData) => {
-    // Append unit
-    formData.append('unit', VITAL_CONFIGS[selectedVital].unit)
-    
-    // Submit the form
-    formAction(formData)
-  }
+    // Call the submitVital action
+    submitVital(formData);
+  };
 
   return (
-    <form action={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold mb-4">{getVitalTitle(selectedVital)}</h2>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <VitalSelector
+        selectedVital={selectedVital}
+        onSelect={(vital) => {
+          setSelectedVital(vital);
+          setInputValue(""); // Reset input when changing selection
+        }}
+      />
 
-      <VitalSelector selectedVital={selectedVital} onSelect={setSelectedVital} disabled={pending} />
+      <Label>{selectedVital.replace(/([A-Z])/g, " $1").trim()} Value</Label>
+      <Input
+        type="number"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder={`Enter ${selectedVital.replace(/([A-Z])/g, " $1").trim()} value`}
+      />
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor={selectedVital}>
-            {getVitalTitle(selectedVital)} Value ({VITAL_CONFIGS[selectedVital].unit})
-          </Label>
-          <Input
-            type={getInputType(selectedVital)}
-            id={selectedVital}
-            name="vitalValue"
-            required
-            className="mt-1"
-            placeholder={getPlaceholder(selectedVital)}
-            step={selectedVital === "temperature" ? "0.1" : "1"}
-            min={VITAL_CONFIGS[selectedVital].min}
-            max={VITAL_CONFIGS[selectedVital].max}
-            disabled={pending}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="notes">Notes</Label>
-          <Textarea
-            id="notes"
-            name="notes"
-            placeholder="Add any additional notes here..."
-            className="mt-1"
-            disabled={pending}
-          />
-        </div>
+      <div>
+        <Label htmlFor="notes">Notes</Label>
+        <Textarea
+          id="notes"
+          name="notes"
+          placeholder="Add any additional notes here..."
+          className="mt-1"
+        />
       </div>
 
       <input type="hidden" name="vitalType" value={selectedVital} />
 
-      <SubmitButton />
-
-      {state?.message && (
-        <p className={`mt-4 text-center ${state.success ? "text-green-600" : "text-red-600"}`}>
-          {state.message}
-        </p>
-      )}
+      <Button type="submit">Submit</Button>
     </form>
-  )
+  );
 }
