@@ -22,6 +22,9 @@ export default function Navigation() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="text-white hover:text-gray-200">
+              Dashboard
+            </Link>
             <span className="text-white">
               {session.user?.name}
             </span>
