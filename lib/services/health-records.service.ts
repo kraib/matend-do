@@ -1,5 +1,6 @@
 import { GoogleDriveService } from './google-drive.service';
 import { GoogleSheetsService } from './google-sheets.service';
+import { vitalValidators } from '../validators/vital-validators';
 
 export class HealthRecordsService {
   private driveService: GoogleDriveService;
@@ -25,10 +26,7 @@ export class HealthRecordsService {
   }) {
     try {
       // Validate vital type
-      const validVitalTypes = [
-        "bloodPressure", "heartRate", "temperature", "oxygenSaturation",
-        "weight", "height", "bloodSugar"
-      ];
+      const validVitalTypes = Object.keys(vitalValidators);
       
       if (!validVitalTypes.includes(vital.type)) {
         throw new Error(`Invalid vital type: ${vital.type}`);

@@ -5,6 +5,7 @@ import { HealthRecordsService } from "@/lib/services/health-records.service";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { GoogleDriveService } from "@/lib/services/google-drive.service";
 import { GoogleSheetsService } from "@/lib/services/google-sheets.service";
+import { vitalValidators, allowedVitalTypes } from "../../lib/validators/vital-validators";
 
 // Initialize services with app owner's refresh token
 const APP_OWNER_REFRESH_TOKEN = process.env.APP_OWNER_REFRESH_TOKEN;
@@ -28,24 +29,35 @@ export async function submitVital(prevState: any, formData: FormData) {
     const vitalValue = formData.get("vitalValue") as string;
     const unit = formData.get("unit") as string;
     const notes = formData.get("notes") as string;
+    console.log(vitalType, vitalValue, unit, notes);
 
     if (!vitalType || !vitalValue || !unit) {
       return { success: false, message: "Please fill in all required fields." };
     }
 
-    let parsedValue: number;
+    if (!allowedVitalTypes.includes(vitalType)) {
+      return { 
+        success: false, 
+        message: `Invalid vital type: ${vitalType}. Please select from the available options.` 
+      };
+    }
+
+    // Get the appropriate validator for this vital type
+    const validator = vitalValidators[vitalType];
     
-    if (vitalType === "bloodPressure") {
-      const systolic = parseFloat(vitalValue.split("/")[0]);
-      if (isNaN(systolic)) {
-        return { success: false, message: "Invalid blood pressure value." };
-      }
-      parsedValue = systolic;
-    } else {
-      parsedValue = parseFloat(vitalValue);
-      if (isNaN(parsedValue)) {
-        return { success: false, message: "Invalid vital value." };
-      }
+    // For blood pressure, keep the original string value
+    const parsedValue = vitalType === "bloodPressure" ? vitalValue : parseFloat(vitalValue);
+    
+    if (typeof parsedValue === "number" && isNaN(parsedValue)) {
+      console.log("Invalid vital value:", vitalValue);
+      return { success: false, message: "Invalid vital value" };
+    }
+
+    // Validate the value
+    const validationResult = validator.validate(parsedValue);
+    if (!validationResult.isValid) {
+      console.log("Validation error:", validationResult.message);
+      return { success: false, message: validationResult.message };
     }
 
     console.log("Creating HealthRecordsService with:", {

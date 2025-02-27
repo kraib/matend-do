@@ -111,7 +111,8 @@ export default function VitalSelector({ selectedVital, onSelect, disabled }: Vit
     setActiveVital(selectedVital); // Sync state when prop updates
   }, [selectedVital]);
 
-  const handleSelection = (vital: VitalType) => {
+  const handleSelection = (e: React.MouseEvent, vital: VitalType) => {
+    e.preventDefault(); // Prevent form submission
     setActiveVital(vital);
     onSelect(vital); // Ensures the parent state updates
   };
@@ -125,7 +126,7 @@ export default function VitalSelector({ selectedVital, onSelect, disabled }: Vit
             {vitals.map((vital) => (
               <button
                 key={vital.type}
-                onClick={() => handleSelection(vital.type)}
+                onClick={(e) => handleSelection(e, vital.type)}
                 disabled={disabled}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   activeVital === vital.type
